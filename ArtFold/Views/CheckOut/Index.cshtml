@@ -388,7 +388,7 @@
 
                 const details = await response.json();
 
-                if (details == "success") {
+                if (details.success) {
                     $('#notification-container').html(`
                                                 <div class="alert alert-success alert-dismissible fade show"  role="alert">
                                             <strong>The order is created successfully!</strong>
@@ -397,6 +397,9 @@
 
 
                                     `);
+                    if (details.redirectUrl) {
+                        window.location.href = details.redirectUrl;
+                    }
                 } else {
                     $('#notification-container').html(`
                                                         <div class="alert alert-danger alert-dismissible fade show" role="alert">

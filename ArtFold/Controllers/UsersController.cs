@@ -74,5 +74,65 @@ namespace ArtFold.Controllers
 
             return RedirectToAction("Login", "Authentication");
         }
+
+
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                return View(user);
+            }
+
+
+            return RedirectToAction("Login", "Authentication");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(User model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user != null)
+                {
+                    // Kiểm tra email có tồn tại trong hệ thống hay không
+                    if (_context.Users.Any(u => u.Email == model.Email && u.Id != user.Id))
+                    {
+                        ModelState.AddModelError("Email", "Email already exists.");
+                        return View(model);
+                    }
+
+                    // Cập nhật các trường dữ liệu
+                    user.FullName = model.FullName;
+                    user.Email = model.Email;
+                    user.UserName = model.UserName;
+                    user.PhoneNumber = model.PhoneNumber;
+
+                    // Cập nhật thông tin người dùng
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        return Json(new { success = true, message = "Profile updated successfully!" });
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+
+            // Trả về các lỗi validation nếu có
+            var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
+                                   .Select(x => new { field = x.Key, errors = x.Value.Errors.Select(e => e.ErrorMessage).ToList() })
+                                   .ToList();
+            return Json(new { success = false, errors });
+        }
+
     }
 }

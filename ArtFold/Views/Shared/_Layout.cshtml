@@ -75,6 +75,45 @@
             color: #4CAF50;
         }
 
+        .header__top__right__auth {
+            position: relative;
+            display: inline-block;
+        }
+
+        .auth-sub-menu {
+            display: none; /* Ẩn sub-menu */
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            list-style: none;
+            z-index: 10;
+        }
+
+            .auth-sub-menu li {
+                padding: 10px;
+                white-space: nowrap;
+            }
+
+                .auth-sub-menu li a {
+                    color: #333;
+                    text-decoration: none;
+                }
+
+                .auth-sub-menu li:hover a {
+                    color: #4CAF50; /* Màu khi hover */
+                }
+
+        .header__top__right__auth:hover .auth-sub-menu {
+            display: block; /* Hiển thị sub-menu khi hover */
+        }
+
+        .header__top__right__auth span {
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -115,6 +154,10 @@
                                     {
                                         <div class="header__top__right__auth authentication pr-1">
                                             <span class="text-dark">Welcome, @User.Identity.Name</span>
+                                            <ul class="auth-sub-menu">
+                                                <li><a href="@Url.Action("Purchase", "CheckOut")">Purchase Order</a></li>
+                                                <li><a href="@Url.Action("Profile", "Users")">Profile</a></li>
+                                            </ul>
                                         </div>
                                         <div class="header__top__right__auth authentication pr-1">
                                             <form asp-action="Logout" asp-controller="Authentication" method="post">

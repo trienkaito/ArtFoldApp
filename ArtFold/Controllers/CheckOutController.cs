@@ -175,7 +175,7 @@ namespace ArtFold.Controllers
 
 
 
-                            return new JsonResult("success");
+                            return new JsonResult(new { success = true, redirectUrl = Url.Action("Success", "CheckOut") });
                         }
                     }
                 }
@@ -299,5 +299,26 @@ namespace ArtFold.Controllers
 
             return accessToken;
         }
+
+
+        public async Task<IActionResult> Purchase()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userCheckOuts = await _context.CheckOuts
+                            .Where(c => c.UserID == user.Id)
+                            .Include(c => c.CheckOutProducts)
+                            .ThenInclude(cp => cp.Product)
+                            .OrderByDescending(c => c.OrderDate)
+                            .ToListAsync();
+
+            return View(userCheckOuts);
+        }
     }
+
+
 }
