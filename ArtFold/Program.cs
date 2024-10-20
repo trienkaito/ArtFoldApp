@@ -52,7 +52,7 @@ namespace ArtFold
 
             // Cấu hình Cloudinary
             DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
-            Cloudinary cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("cloudinary://732414891615852:5TXmd8o8OtXr2ki_skeFtxMlB8o@dfpvoiwxi"));
+            Cloudinary cloudinary = new Cloudinary("cloudinary://732414891615852:5TXmd8o8OtXr2ki_skeFtxMlB8o@dfpvoiwxi");
             cloudinary.Api.Secure = true;
             builder.Services.AddSingleton(cloudinary);
 
