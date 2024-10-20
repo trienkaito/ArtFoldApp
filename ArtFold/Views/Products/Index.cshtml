@@ -1,0 +1,381 @@
+﻿@model IEnumerable<ArtFold.Models.Product>
+
+<head>
+    <style>
+        .breadcrumb-section {
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb-title {
+            position: absolute;
+        }
+
+        #lastestProduct {
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        .product__pagination{
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination li{
+            padding: 0 15px;
+        }
+
+        .page-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .owl-nav {
+            display: none;
+        }
+
+        .category-link{
+            cursor: pointer;
+        }
+        
+        .category-link.selected {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        #maxamount{
+            max-width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section">
+        <img src="~/lib/ogani-master/img/breadcrumb.jpg" style="height: 130px; object-fit:cover" />
+        <div class="container breadcrumb-title">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>ArtFold Shop</h2>
+                        <div class="breadcrumb__option">
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                            <span>Shop</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+    <!-- Product Section Begin -->
+    <section class="product spad">
+        <div class="container">
+            <div class="row">
+                <div>
+                    <div id="salesOff" class="product__discount">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-5">
+                        <div class="sidebar">
+                            <div class="sidebar__item">
+                                <h4>Department</h4>
+                                <ul>
+                                    <li><a class="category-link" data-category="Anime">Anime</a></li>
+                                    <li><a class="category-link" data-category="Vehicle">Vehicle</a></li>
+                                    <li><a class="category-link" data-category="Marvel">Marvel</a></li>
+                                    <li><a class="category-link" data-category="Architecture">Architecture</a></li>
+                                </ul>
+                            </div>
+                            <div class="sidebar__item">
+                                <h4>Price</h4>
+                                <div class="price-range-wrap">
+                                    <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
+                                         data-min="0" data-max="500000" step="10000">
+                                        <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
+                                        <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                                        <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                                    </div>
+                                    <div class="range-slider">
+                                        <div class="price-input">
+                                            <input type="text" id="minamount">
+                                            <input type="text" id="maxamount">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="lastestProduct"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9 col-md-7">
+
+                        <div class="filter__item">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-9">
+                                    <div class="filter__sort">
+                                        <span>Sort By</span>
+                                        <select>
+                                            <option value="0">Default</option>
+                                            <option value="0">Default</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-3">
+                                    <div class="filter__option">
+                                        <span class="icon_grid-2x2"></span>
+                                        <span class="icon_ul"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="listProduct" class="row">
+                            
+                            
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <!-- Product Section End -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            bindAddToCartButtons();
+            loadCartItemCount();
+
+            var minPrice = 0;
+            var maxPrice = 500000;
+
+            $("#minamount").val(minPrice);
+            $("#maxamount").val(maxPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " đ");
+
+            $(".price-range").slider({
+                range: true,
+                min: minPrice,
+                max: maxPrice,
+                values: [minPrice, maxPrice],
+                slide: function (event, ui) {
+                    $("#minamount").val(ui.values[0]);
+                    $("#maxamount").val(ui.values[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " đ");
+                    filterProductsByPrice(ui.values[0], ui.values[1]);
+                }
+            });
+
+            function filterProductsByPrice(minPrice, maxPrice) {
+                $.ajax({
+                    url: '@Url.Action("FilterByPrice", "Products")',
+                    type: 'GET',
+                    data: { minPrice: minPrice, maxPrice: maxPrice },
+                    success: function (data) {
+                        $('#listProduct').html(data);
+                        bindAddToCartButtons();
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi lọc sản phẩm theo giá.');
+                    }
+                });
+            }
+
+
+
+
+            $(document).on('click', '.pagination-link', function (e) {
+                e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
+                var page = $(this).data('page');
+                console.log('Page clicked:', page); // Kiểm tra log
+                loadProducts(page);
+            });
+
+            function loadProducts(page) {
+                console.log('Loading products for page:', page);
+                $.ajax({
+                    url: '@Url.Action("ShowProductsWithPagination", "Products")',
+                    type: 'GET',
+                    data: { page: page },
+                    success: function (data) {
+                        $('#listProduct').html(data);
+                        bindAddToCartButtons();
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi tải sản phẩm.');
+                    }
+                });
+            }
+
+            $(document).on('click', '.category-link', function (e) {
+                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                var category = $(this).data('category');
+
+                // Gọi hàm filterProducts để lọc theo danh mục
+                filterProducts(category);
+            });
+
+            function filterProducts(category) {
+                const selectedCategory = $('.category-link.selected');
+
+                if (selectedCategory.length && selectedCategory.data('category') === category) {
+                    // Nếu danh mục đã được chọn, bỏ lọc
+                    $.ajax({
+                        url: '@Url.Action("ShowProductsWithPagination", "Products")',
+                        type: 'GET',
+                        success: function (data) {
+                            $('#listProduct').html(data);
+                            bindAddToCartButtons();
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi bỏ lọc sản phẩm.');
+                        }
+                    });
+
+                    // Bỏ lớp CSS đã chọn
+                    selectedCategory.removeClass('selected');
+                } else {
+                    // Nếu chưa được chọn, áp dụng bộ lọc
+                    $.ajax({
+                        url: '@Url.Action("FilterByCategory", "Products")',
+                        type: 'GET',
+                        data: { category: category },
+                        success: function (data) {
+                            $('#listProduct').html(data);
+                            bindAddToCartButtons();
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi lọc sản phẩm.');
+                        }
+                    });
+
+                    // Thêm lớp CSS đã chọn
+                    $('.category-link').removeClass('selected'); // Bỏ chọn tất cả
+                    $('[data-category="' + category + '"]').addClass('selected'); // Chọn danh mục hiện tại
+                }
+            }
+
+            $.ajax({
+                url: '@Url.Action("ShowProductsWithPagination", "Products")',
+                type: 'GET',
+                success: function (data) {
+                    $('#listProduct').html(data);
+                    bindAddToCartButtons();
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi tải sản phẩm.');
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetLatestProduct", "Products")',
+                type: 'GET',
+                success: function (data) {
+                    $('#lastestProduct').html(data);
+
+                    $('.latest-product__slider').owlCarousel({
+                        loop: true,
+                        margin: 10,
+                        nav: true,
+                        items: 1,
+                        autoplay: true,
+                        autoplayTimeout: 3000,
+                        autoplayHoverPause: true,
+                    });
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi tải sản phẩm.');
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("SalesOffProducts", "Products")',
+                type: 'GET',
+                success: function (data) {
+                    $('#salesOff').html(data);
+                    bindAddToCartButtons();
+                    $('.product__discount__slider ').owlCarousel({
+                        loop: true,
+                        margin: 10,
+                        nav: true,
+                        items: 3,
+                        autoplay: true,
+                        autoplayTimeout: 3000,
+                        autoplayHoverPause: true,
+                        onInitialized: function () {
+                            $('.owl-nav').addClass('disabled');
+                        }
+                    });
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi tải sản phẩm.');
+                }
+            });
+
+            function loadCartItemCount() {
+                $.ajax({
+                    url: '@Url.Action("GetCartItemCount", "Carts")',
+                    type: 'GET',
+                    success: function (data) {
+                        console.log('fetch success');
+                        $('#cartItemCount').text(data.count);
+                    },
+                    error: function () {
+                        console.log("Unable to fetch cart item count.");
+                    }
+                });
+            };
+
+            function bindAddToCartButtons() {
+                $('.addCartBtn').off('click').on('click', function () {
+                    var quantity = 1;
+                    var productId = $(this).data('product-id');
+                    $.ajax({
+                        url: '@Url.Action("AddToCart", "Carts")', // Đường dẫn tới action
+                        type: 'POST',
+                        data: {
+                            productId: productId,
+                            quantity: quantity
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                loadCartItemCount();
+                                var successPopup = $('#successPopup');
+                                successPopup.addClass('show');
+
+                                setTimeout(function () {
+                                    successPopup.removeClass('show');
+                                }, 2000);
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('An error occurred while adding the product to the cart.');
+                        }
+                    });
+
+                });
+            }
+        });
+    </script>
+</body>
+
+
+

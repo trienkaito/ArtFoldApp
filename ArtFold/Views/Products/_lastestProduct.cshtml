@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ArtFold.Models.Product>
+
+
+<body>
+    <div class="sidebar__item">
+        <div class="latest-product__text">
+            <h4>Latest Products</h4>
+            <div class="latest-product__slider owl-carousel">
+                <div class="latest-prdouct__slider__item">
+                    @foreach(var product in Model)
+                    {
+                        <a asp-action="Details" asp-controller="Products" asp-route-id="@product.ProductID" class="latest-product__item">
+                            <div class="latest-product__item__pic">
+                                <img src="@product.ImgUrl" alt="">
+                            </div>
+                            <div class="latest-product__item__text">
+                                <h6>@product.Name</h6>
+                                <span>@(product.Price.ToString("N0").Replace(",", ".") + " đ")</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+                <div class="latest-prdouct__slider__item">
+                    @foreach (var product in Model)
+                    {
+                        <a asp-action="Details" asp-controller="Products" asp-route-id="@product.ProductID" class="latest-product__item">
+                            <div class="latest-product__item__pic">
+                                <img src="@product.ImgUrl" alt="">
+                            </div>
+                            <div class="latest-product__item__text">
+                                <h6>@product.Name</h6>
+                                <span>@(product.Price.ToString("N0").Replace(",", ".") + " đ")</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

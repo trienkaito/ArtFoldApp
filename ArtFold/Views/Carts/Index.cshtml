@@ -1,0 +1,325 @@
+﻿@model ArtFold.Models.Cart
+
+<head>
+    <style>
+        .breadcrumb-section {
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb-title {
+            position: absolute;
+        }
+
+        .animation-btn{
+            background-color: #7fad39;
+            color: #fff;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .animation-btn:hover{
+            background-color: #fff;
+            color: black;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section">
+        <img src="~/lib/ogani-master/img/breadcrumb.jpg" style="height: 130px; object-fit:cover" />
+        <div class="container breadcrumb-title">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__option">
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                            <span>Shopping Cart</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+    <!-- Shoping Cart Section Begin -->
+    <section class="shoping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="shoping__product">Products</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.CartProducts)
+                                {
+                                    <tr data-product-id="@item.Product.ProductID">
+                                        <td class="delete-btn pr-5">
+                                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteModal">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+
+                                        <td class="shoping__cart__item">
+                                            <img src="@item.Product.ImgUrl" alt="" style="width: 30%">
+                                            <h5><a asp-action="Details" asp-controller="Products" asp-route-id="@item.ProductID" style="color: black">@item.Product.Name</a></h5>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            <span>@(item.Product.Price.ToString("N0").Replace(",", ".") + " đ")</span>
+                                        </td>
+                                        <td class="shoping__cart__quantity">
+                                            <div class="quantity">
+                                                <div class="pro-qty">
+                                                    <div class="dec qtybtn">-</div>
+                                                    <input type="text" id="productQuantity" value="@item.ProductCartQuantity" min="1" max="@item.Product.ProductQuantity">
+                                                    <div class="inc qtybtn">+</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="shoping__cart__total_price">@((item.Product.Price * item.ProductCartQuantity).ToString("N0").Replace(",", ".") + " đ")</td>
+                                    </tr>
+                                }
+
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__btns continue">
+                        <a asp-action="Index" asp-controller="Products" class="primary-btn animation-btn">CONTINUE SHOPPING</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__continue">
+                        <div class="shoping__discount">
+                            <h5>Discount Codes</h5>
+                            <form action="#">
+                                <input type="text" placeholder="Enter your coupon code">
+                                <button type="submit" class="site-btn">APPLY COUPON</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__checkout">
+                        <h5>Cart Total</h5>
+                        <ul>
+                            <li>Total <span id="cartTotal"></span></li>
+                        </ul>
+                        <a id="checkOut" class="primary-btn animation-btn" style="cursor: pointer">PROCEED TO CHECKOUT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shoping Cart Section End -->
+
+
+
+    <!-- Modal Xác Nhận Xóa -->
+    <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to remove this product from your cart?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="confirmDeleteBtn">Yes, delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        calculateCartTotal();
+
+        $('#checkOut').click(function () {
+            $.ajax({
+                url: '@Url.Action("ProceedToCheckout", "Carts")', // Đường dẫn tới action mới
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = response.redirectUrl; 
+                    } else {
+                        alert(response.message); // Hiển thị alert nếu giỏ hàng trống
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // In ra lỗi trong console
+                    console.log("Error details: ", jqXHR.responseText);
+                    console.log("Status: ", textStatus);
+                    console.log("Error: ", errorThrown);
+
+                    // Hiển thị alert lỗi chi tiết
+                    alert("An error occurred: " + jqXHR.responseText + "\nStatus: " + textStatus + "\nError: " + errorThrown);
+                }
+            });
+        });
+
+
+
+        $('.pro-qty input').on('input', function () {
+            var maxQuantity = $(this).attr('max');
+            var inputVal = parseInt($(this).val());
+
+            if (inputVal > maxQuantity) {
+                $(this).val(maxQuantity);
+            }
+            else if (inputVal <= 0 || isNaN(inputVal)) {
+                $(this).val(1);
+            }
+
+            else {
+                $(this).val(inputVal);
+            }
+        });
+
+
+        $('.dec').on('click', function () {
+            var $input = $(this).siblings('input');
+            console.log($input);
+            var productId = $(this).closest('tr').data('product-id');
+            var newQuantity = parseInt($input.val()) - 1;
+            var minQuantity = parseInt($input.attr('min'));
+            if (newQuantity >= minQuantity) {
+                updateCartProductQuantity(productId, newQuantity, $input);
+            } else {
+                $input.val(minQuantity);
+            }
+        });
+
+        // Sự kiện khi người dùng nhấn nút "+"
+        $('.inc').on('click', function () {
+            var $input = $(this).siblings('input');
+            console.log($input);
+            var productId = $(this).closest('tr').data('product-id');
+            var newQuantity = parseInt($input.val()) + 1
+            var maxQuantity = parseInt($input.attr('max'));
+            var totalPrice = $('.shoping__cart__total_price').text().replace('.', '').replace(' đ', '');
+            console.log(totalPrice);
+            if (newQuantity <= maxQuantity) {
+                updateCartProductQuantity(productId, newQuantity, $input);
+            } else {
+                $input.val(maxQuantity);
+            }
+        });
+
+        // Hàm cập nhật giỏ hàng bằng AJAX
+        function updateCartProductQuantity(productId, newQuantity, $input) {
+            $.ajax({
+                url: '@Url.Action("UpdateProductCartQuantity", "Carts")',
+                type: 'POST',
+                data: { productId: productId,
+                        newQuantity: newQuantity
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $input.val(newQuantity);
+                        var $row = $('tr[data-product-id="' + productId + '"]');
+                        $row.find('.shoping__cart__total_price').text(response.productTotal);
+                        calculateCartTotal();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (err) {
+                    alert('Error updating the cart.');
+                    console.log(err.error);
+                }
+            });
+        };
+
+        function calculateCartTotal() {
+            var cartTotal = 0;
+
+            $('.shoping__cart__total_price').each(function () {
+                var productTotal = parseFloat($(this).text().replace('.', '').replace(' đ', ''));
+                cartTotal += productTotal;
+                console.log(cartTotal + "đ");
+            });
+
+            // Cập nhật hiển thị tổng giá tiền
+            
+            $('#cartTotal').text(cartTotal.toLocaleString('vi-VN') + " đ");
+        };
+
+        function loadCartItemCount() {
+            $.ajax({
+                url: '@Url.Action("GetCartItemCount", "Carts")',
+                type: 'GET',
+                success: function (data) {
+                    $('#cartItemCount').text(data.count);
+                },
+                error: function () {
+                    console.log("Unable to fetch cart item count.");
+                }
+            });
+        }
+
+        var deleteProductId;
+
+        $('.delete-btn').on('click', function () {
+            deleteProductId = $(this).closest('tr').data('product-id');
+            console.log(deleteProductId);
+        });
+
+        $('#confirmDeleteBtn').on('click', function () {
+            $.ajax({
+                url: '@Url.Action("DeleteProductCart", "Carts")',
+                type: 'POST',
+                data: { productId: deleteProductId },
+                success: function (response) {
+                    if (response.success) {
+                        loadCartItemCount();
+                        $('#DeleteModal').modal('hide');
+                        $('.modal-backdrop').remove();
+                        $('tr[data-product-id="' + deleteProductId + '"]').remove();
+                        calculateCartTotal();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error deleting the product.');
+                }
+            });
+        });
+    });
+
+
+
+    
+</script>

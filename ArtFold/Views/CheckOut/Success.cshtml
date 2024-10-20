@@ -1,0 +1,119 @@
+﻿@model ArtFold.Models.CheckOut
+
+<head>
+	<style>
+        .success-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 700px;
+            height: 700px;
+        }
+
+        .success-message h1 {
+            color: #d32026;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .check-icon {
+            font-size: 50px;
+            color: #d32026;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .payment-details {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .details-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .details-info {
+            color: #555;
+        }
+
+        .continue-shopping {
+            margin-top: 20px;
+            justify-content: space-between
+        }
+
+        .btn-continue {
+            display: inline-block;
+            background-color: #d32026;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            .btn-continue:hover {
+                background-color: #a81720;
+            }
+
+	</style>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container d-flex justify-content-center my-5">
+        <div class="success-container">
+            <div class="success-message mb-5">
+                <h1>Payment Successfull!</h1>
+                <div class="check-icon">
+                    &#10003;
+                </div>
+                <p>Payment has been made successfully. ArtFold will deliver to you in the shortest possible time.</p>
+            </div>
+
+            <div class="payment-details">
+                <div class="details-row my-5">
+                    <div class="details-title">Payment Method</div>
+                    <div class="details-info">@Model.PaymentMethod</div>
+                </div>
+                <div class="details-row my-5">
+                    <div class="details-title">Shipping Address</div>
+                    <div class="details-info">@Model.User.HouseAddress, @Model.User.Ward, @Model.User.District, @Model.User.City</div>
+                </div>
+                <div class="details-row my-5">
+                    <div class="details-title">Phone</div>
+                    <div class="details-info">@Model.User.PhoneNumber</div>
+                </div>
+                <div class="details-row my-5">
+                    <div class="details-title">Total</div>
+                    <div class="details-info">@Model.TotalPrice.ToString("N0").Replace(",", ".") VNĐ</div>
+                </div>
+                <div class="details-row my-5">
+                    <div class="details-title">Transaction Code</div>
+                    <div class="details-info">@Model.CheckOutID.ToString().ToUpper()</div>
+                </div>
+            </div>
+
+            <div class="continue-shopping d-flex">
+                <a asp-action="Index" asp-controller="Home" class="btn-continue"> Homepage</a>
+                <a asp-action="Index" asp-controller="Products" class="btn-continue">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</body>

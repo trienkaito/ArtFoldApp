@@ -1,0 +1,74 @@
+﻿@model X.PagedList.IPagedList<ArtFold.Models.Product>
+@using X.PagedList.Mvc;
+
+<body>
+	<div class="products-list row">
+        @foreach (var product in Model)
+        {
+            <div asp-route-id="@product.ProductID" asp-controller="Products" asp-action="Details" class="col-lg-4 col-md-6 col-sm-6">
+                <div class="product__item">
+                    <div class="product__item__pic">
+                        <img src="@product.ImgUrl" />
+                        <ul class="product__item__pic__hover">
+                            <li><button type="button" class="btn btn-link addCartBtn" data-product-id="@product.ProductID"><a><i class="fa fa-shopping-cart"></i></a></button></li>
+                        </ul>
+                    </div>
+                    <div class="product__item__text">
+                        <h6><a asp-route-id="@product.ProductID" asp-controller="Products" asp-action="Details">@product.Name</a></h6>
+                        <h5>@(product.Price.ToString("N0").Replace(",", ".") + " đ")</h5>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="product__pagination">
+        <nav>
+            <ul class="pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link pagination-link" data-page="@(Model.PageNumber - 1)"  style="display: flex; justify-content: center;  align-items: center;">
+                            <i class="fa fa-long-arrow-left"></i>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link pagination-link" data-page="@(Model.PageNumber - 1)" style="display: flex; justify-content: center;  align-items: center;">
+                            <i class="fa fa-long-arrow-left"></i>
+                        </a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="@(i == Model.PageNumber ? "page-item active" : "page-item")">
+                        <a class="page-link pagination-link" data-page="@i" style="display: flex; justify-content: center;  align-items: center;">@i</a>
+                    </li>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link pagination-link" data-page="@(Model.PageNumber + 1)" style="display: flex; justify-content: center;  align-items: center;">
+                            <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link pagination-link" data-page="@(Model.PageNumber - 1)" style="display: flex; justify-content: center;  align-items: center;">
+                            <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                    </li>
+
+                }
+            </ul>
+        </nav>
+    </div>
+</body>
+
+

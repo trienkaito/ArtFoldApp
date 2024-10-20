@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ArtFold</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ArtFold.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/lib/ogani-master/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="~/lib/ogani-master/css/style.css" type="text/css">
+
+    <style>
+        .footer-content {
+            background-color: #F3F6FA;
+            width: 100%;
+            white-space: nowrap;
+            line-height: 60px;
+        }
+
+        .hero__item {
+            background-image: url("https://i.ytimg.com/vi/d230GHFznGo/maxresdefault.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .header__top__right {
+            display: flex;
+            justify-content: end;
+        }
+
+        .addCartBtn {
+            border: none;
+        }
+
+        .popup {
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            width: 250px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 999999;
+            transition: right 0.5s ease-in-out;
+        }
+
+
+        .popup.show {
+            right: 20px;
+        }
+
+        #successPopup {
+            background-color: #4CAF50;
+        }
+
+        #successAddressPopup {
+            background-color: #4CAF50;
+        }
+
+        .header__menu .active > a {
+            color: #4CAF50;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="successPopup" class="popup">
+        <span id="popupMessage">Add To Cart Successfully</span>
+    </div>
+
+    <div id="successAddressPopup" class="popup">
+		<span id="popupAddressMessage">Update Shipping Address Successfully</span>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Header Section Begin -->
+        <header class="header">
+            <div class="header__top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="header__top__left">
+                                <ul>
+                                    <li><i class="fa fa-envelope"></i> artfoldFPTU@gmail.com</li>
+                                    <li>Free Shipping for all Order in @DateTime.Now</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="header__top__right">
+                                <div class="header__top__right__social">
+                                    <a href="#"><i class="fa fa-facebook"></i></a>
+                                    <a href="#"><i class="fa fa-twitter"></i></a>
+                                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                                    <a href="#"><i class="fa fa-pinterest-p"></i></a>
+                                </div>
+
+                                <div class="authen">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <div class="header__top__right__auth authentication pr-1">
+                                            <span class="text-dark">Welcome, @User.Identity.Name</span>
+                                        </div>
+                                        <div class="header__top__right__auth authentication pr-1">
+                                            <form asp-action="Logout" asp-controller="Authentication" method="post">
+                                                <button type="submit" class="login-btn text-dark">
+                                                    <i class="fa fa-user-o"></i> Logout
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="header__top__right__auth authentication pr-1">
+                                            <a href="@Url.Action("Login", "Authentication")"><i class="fa fa-user"></i> Login</a>
+                                        </div>
+
+                                        <div class="header__top__right__auth authentication">
+                                            <a href="@Url.Action("Register", "Authentication")"><i class="fa fa-user"></i> Register</a>
+                                        </div>
+                                    }
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="header__logo">
+                            <a asp-action="Index" asp-controller="Home">
+                                <h2>ART FOLD</h2>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <nav class="header__menu d-flex justify-content-center">
+                            <ul>
+                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">
+                                    <a href="@Url.Action("Index", "Home")">Home</a>
+                                </li>
+                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Products" ? "active" : "")">
+                                    <a asp-controller="Products" asp-action="Index">Shop</a>
+                                </li>
+                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "CheckOuts" ? "active" : "")">
+                                    <a asp-controller="CheckOut" asp-action="Index">Check Out</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="header__cart">
+                            <ul>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
+                                    <li><a asp-controller="Carts" asp-action="Index"><i class="fa fa-shopping-bag"></i> <span id="cartItemCount">0</span></a></li>
+                                }
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Header Section End -->
+
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer Section Begin -->
+    <footer class="footer-content spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="footer__about">
+                        <div class="footer__about__logo">
+                            <h2>ART FOLD</h2>
+                        </div>
+                        <ul>
+                            <li>Address: FPT University</li>
+                            <li>Phone: +84 934 763 21 0</li>
+                            <li>Email: artfoldFPTU@gmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+                    <div class="footer__widget">
+                        <h6>Useful Links</h6>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">About Our Shop</a></li>
+                            <li><a href="#">Secure Shopping</a></li>
+                            <li><a href="#">Delivery infomation</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Our Sitemap</a></li>
+                        </ul>
+                        <ul>
+                            <li><a href="#">Who We Are</a></li>
+                            <li><a href="#">Our Services</a></li>
+                            <li><a href="#">Projects</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Innovation</a></li>
+                            <li><a href="#">Testimonials</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="footer__widget">
+                        <h6>Join Our Newsletter Now</h6>
+                        <p>Get E-mail updates about our latest shop and special offers.</p>
+                        <form action="#">
+                            <input type="text" placeholder="Enter your mail">
+                            <button type="submit" class="site-btn">Subscribe</button>
+                        </form>
+                        <div class="footer__widget__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-pinterest"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/ogani-master/js/jquery-3.3.1.min.js"></script>
+    <script src="~/lib/ogani-master/js/bootstrap.min.js"></script>
+    <script src="~/lib/ogani-master/js/jquery-ui.min.js"></script>
+    <script src="~/lib/ogani-master/js/mixitup.min.js"></script>
+    <script src="~/lib/ogani-master/js/owl.carousel.min.js"></script>
+    <script src="~/lib/ogani-master/js/jquery.slicknav.js"></script>
+    <script src="~/lib/ogani-master/js/main.js"></script>
+
+
+    
+    <script>
+        $(document).ready(function () {
+                
+            function loadCartItemCount() {
+                $.ajax({
+                    url: '@Url.Action("GetCartItemCount", "Carts")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#cartItemCount').text(data.count);
+                    },
+                    error: function () {
+                        console.log("Unable to fetch cart item count.");
+                    }
+                });
+            }
+            loadCartItemCount();
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+

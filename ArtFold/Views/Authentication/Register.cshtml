@@ -1,0 +1,146 @@
+﻿@using ArtFold.Models
+@{
+    Layout = null;
+}
+@model UserRegister
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .divider-text {
+            position: relative;
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+            .divider-text span {
+                padding: 7px;
+                font-size: 12px;
+                position: relative;
+                z-index: 2;
+            }
+
+            .divider-text:after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                border-bottom: 1px solid #ddd;
+                top: 55%;
+                left: 0;
+                z-index: 1;
+            }
+
+        .btn-facebook {
+            background-color: #405D9D;
+            color: #fff;
+        }
+
+        .btn-twitter {
+            background-color: #42AEEC;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex align-items-center justify-content-center mt-5 ">
+        <div class="card bg-light p-4">
+            <article class="card-body mx-auto" style="max-width: 400px;">
+                <h4 class="card-title mt-3 text-center">Create Account</h4>
+                <p class="text-center">Get started with your free account</p>
+
+                <form asp-action="Register" method="post">
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input type="text" asp-for="UserName" id="UserName" class="form-control" placeholder="Username" />
+
+                    </div> <!-- form-group// -->
+                    <div>
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+                        </div>
+                        <input type="text" asp-for="PhoneNumber" id="PhoneNumber" class="form-control" placeholder="Phone Number" />
+
+                    </div> <!-- form-group// -->
+                    <div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"><i class="fa fa-envelope"></i> </span>
+                        </div>
+                        <input type="email" asp-for="Email" id="Email" class="form-control" placeholder="Email" />
+
+                    </div> <!-- form-group// -->
+                    <div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"> <i class="fa fa-building"></i> </span>
+                        </div>
+                        <input asp-for="FullName" type="text" id="FullName" class="form-control" placeholder="FullName" />
+
+                    </div> <!-- form-group end.// -->
+                    <div>
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input asp-for="Password" type="password" id="Password" class="form-control" placeholder="Password" />
+
+                    </div> <!-- form-group// -->
+                    <div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group input-group pb-3">
+                        <div class="input-group-prepend mt-1 mx-2">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input asp-for="RepeatPassword" type="password" id="RepeatPassword" class="form-control" placeholder="Repeat Password" />
+
+                    </div> <!-- form-group// -->
+                    <div>
+                        <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-check d-flex justify-content-center pb-3">
+                        <input asp-for="AgreeTerms" class="form-check-input me-2" type="checkbox" value="true" id="agreeTerms" />
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree all statements in <a href="#!">Terms of service</a>
+                        </label>
+
+                    </div>
+
+                    <div>
+                        <span asp-validation-for="AgreeTerms" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex justify-content-center my-4">
+                        <button type="submit" class="btn btn-primary btn-block"> Create Account  </button>
+                    </div> <!-- form-group// -->
+                    <p class="text-center">Have an account? <a href="@Url.Action("Login", "Authentication")">Log In</a> </p>
+                </form>
+            </article>
+        </div> <!-- card.// -->
+
+    </div>
+    <!--container end.//-->
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</body>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ArtFold.Models.Product>
+
+<body>
+    <div class="section-title product__discount__title">
+        <h2>Sale Off</h2>
+    </div>
+
+    <div class="row">
+        <div class="product__discount__slider owl-carousel">
+
+            @foreach (var product in Model)
+            {
+                <div class="col-lg-4">
+                    <div class="product__discount__item">
+                        <div class="product__discount__item__pic set-bg"
+                             data-setbg="@product.ImgUrl">
+                            <img src="@product.ImgUrl" />
+                            <div class="product__discount__percent">-20%</div>
+
+                            <ul class="product__item__pic__hover">
+                                <li>
+                                    <button class="btn btn-link addCartBtn" data-product-id="@product.ProductID">
+                                        <a><i class="fa fa-shopping-cart"></i></a>
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                        </div>
+                        <div class="product__discount__item__text">
+                            <span>@product.Category.CategoryName</span>
+                            <h5><a asp-route-id="@product.ProductID" asp-controller="Products" asp-action="Details">@product.Name</a></h5>
+                            <div class="product__item__price">@(product.Price.ToString("N0").Replace(",", ".") + " đ") <span>@((product.Price * 1.2).ToString("N0").Replace(",", ".") + " đ")</span></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+
+
+
+

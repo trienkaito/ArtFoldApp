@@ -1,0 +1,177 @@
+﻿@using ArtFold.Models
+@{
+    Layout = null;
+}
+@model VerifyOtp
+
+<head>
+
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .otp-field {
+            flex-direction: row;
+            column-gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .otp-field input {
+                height: 45px;
+                width: 42px;
+                border-radius: 6px;
+                outline: none;
+                font-size: 1.125rem;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+                .otp-field input:focus {
+                    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+                }
+
+                .otp-field input::-webkit-inner-spin-button,
+                .otp-field input::-webkit-outer-spin-button {
+                    display: none;
+                }
+
+        .resend {
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <main class="cd__main">
+        <!-- Start DEMO HTML (Use the following code into your project)-->
+        <body class="container-fluid bg-body-tertiary d-block">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6 col-lg-4" style="min-width: 500px;">
+                    <div class="card bg-white mb-5 mt-5 border-0" style="box-shadow: 0 12px 15px rgba(0, 0, 0, 0.02);">
+                        <div class="card-body p-5 text-center">
+                            <h4>Verify</h4>
+                            <p>Your code was sent to your email</p>
+
+                            <form asp-action="VerifyOtp" method="post">
+                                <div class="otp-field mb-4">
+                                    <label class="form-label" for="Otp">Enter OTP</label>
+                                    <input type="text" asp-for="OtpDigit1" class="otp-input" />
+                                    <input type="text" asp-for="OtpDigit2" class="otp-input" disabled />
+                                    <input type="text" asp-for="OtpDigit3" class="otp-input" disabled />
+                                    <input type="text" asp-for="OtpDigit4" class="otp-input" disabled />
+                                    <input type="text" asp-for="OtpDigit5" class="otp-input" disabled />
+                                    <input type="text" asp-for="OtpDigit6" class="otp-input" disabled />
+                                </div>
+                                <div>
+                                    <span asp-validation-for="OtpDigit1" class="text-danger"></span>
+                                    <span asp-validation-for="OtpDigit2" class="text-danger"></span>
+                                    <span asp-validation-for="OtpDigit3" class="text-danger"></span>
+                                    <span asp-validation-for="OtpDigit4" class="text-danger"></span>
+                                    <span asp-validation-for="OtpDigit5" class="text-danger"></span>
+                                    <span asp-validation-for="OtpDigit6" class="text-danger"></span>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary mb-3">
+                                    Verify
+                                </button>
+                            </form>
+
+                            <p class="resend text-muted mb-0">
+                                Didn't receive code? <a href="@Url.Action("ForgotPassword", "Authentication")">Request again</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </body>
+        <!-- END EDMO HTML (Happy Coding!)-->
+    </main>
+
+
+
+    <script>
+        const inputs = document.querySelectorAll(".otp-field > input");
+        const button = document.querySelector(".btn");
+
+        window.addEventListener("load", () => inputs[0].focus());
+        button.setAttribute("disabled", "disabled");
+
+        inputs[0].addEventListener("paste", function (event) {
+            event.preventDefault();
+
+            const pastedValue = (event.clipboardData || window.clipboardData).getData(
+                "text"
+            );
+            const otpLength = inputs.length;
+
+            for (let i = 0; i < otpLength; i++) {
+                if (i < pastedValue.length) {
+                    inputs[i].value = pastedValue[i];
+                    inputs[i].removeAttribute("disabled");
+                    inputs[i].focus;
+                } else {
+                    inputs[i].value = ""; // Clear any remaining inputs
+                    inputs[i].focus;
+                }
+            }
+        });
+
+        inputs.forEach((input, index1) => {
+            input.addEventListener("keyup", (e) => {
+                const currentInput = input;
+                const nextInput = input.nextElementSibling;
+                const prevInput = input.previousElementSibling;
+
+                if (currentInput.value.length > 1) {
+                    currentInput.value = "";
+                    return;
+                }
+
+                if (
+                    nextInput &&
+                    nextInput.hasAttribute("disabled") &&
+                    currentInput.value !== ""
+                ) {
+                    nextInput.removeAttribute("disabled");
+                    nextInput.focus();
+                }
+
+                if (e.key === "Backspace") {
+                    inputs.forEach((input, index2) => {
+                        if (index1 <= index2 && prevInput) {
+                            input.setAttribute("disabled", true);
+                            input.value = "";
+                            prevInput.focus();
+                        }
+                    });
+                }
+
+                button.classList.remove("active");
+                button.setAttribute("disabled", "disabled");
+
+                const inputsNo = inputs.length;
+                if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
+                    button.classList.add("active");
+                    button.removeAttribute("disabled");
+
+                    return;
+                }
+            });
+        });
+    </script>
+
+
+
+</body>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
